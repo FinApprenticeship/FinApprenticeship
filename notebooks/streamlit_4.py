@@ -33,7 +33,8 @@ st.markdown("""
 # CSV laden
 
 import os
-csv_path = os.path.join(os.getcwd(), 'data', 'dazubi_grouped_berufe.csv')
+base_dir = os.path.dirname(os.path.abspath(__file__))
+csv_path = os.path.join(base_dir, '..', 'data', 'dazubi_grouped_berufe.csv')
 print("CWD:", os.getcwd())
 print("CSV Path:", csv_path)
 
