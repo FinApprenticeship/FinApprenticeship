@@ -31,7 +31,14 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # CSV laden
-df = pd.read_csv("data/dazubi_grouped_berufe.csv")
+
+import os
+csv_path = os.path.join(os.getcwd(), 'data', 'dazubi_grouped_berufe.csv')
+print("CWD:", os.getcwd())
+print("CSV Path:", csv_path)
+
+# df = pd.read_csv("data/dazubi_grouped_berufe.csv")
+df = pd.read_csv(csv_path)
 df = df[["Jahr", "Region", "Beruf_clean", "Vorzeitige Vertragslösungen Insgesamt"]].dropna()
 
 # Sidebar – Filter
