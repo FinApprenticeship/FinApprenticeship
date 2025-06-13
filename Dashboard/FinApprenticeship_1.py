@@ -181,7 +181,7 @@ if xgb_model is not None:
 if dropout is not None and not pd.isnull(dropout):
     comp_states = (
         df[
-            (df["year"] == int(year))
+            (df["year"] == int(year)) 
             & (df["sector"] == sector)
             & (df["education"] == education)
             & (df["age"] == age)
