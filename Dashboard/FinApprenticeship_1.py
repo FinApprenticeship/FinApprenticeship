@@ -184,7 +184,7 @@ if dropout is not None and not pd.isnull(dropout):
             (df["year"] == int(year)) 
             & (df["sector"] == sector)
             & (df["education"] == education)
-            & (df["age"] == age)
+            & (df["age"] == age) 
         ]
         .groupby("state")["dropout_rate"]
         .mean()
