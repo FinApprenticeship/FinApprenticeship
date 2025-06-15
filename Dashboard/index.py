@@ -54,8 +54,8 @@ st.markdown(
 )
 
 PAGES = {
-    "Visualization": "visualization",
-    "Prediction": "prediction",
+    "Visualisierung": "visualization",
+    "Vorhersage": "prediction",
     "Simulation": "simulation",
 }
 
