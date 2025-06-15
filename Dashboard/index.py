@@ -11,16 +11,9 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    /* Common styles */
-    .main .block-container {
-        max-width: 100vw !important;
-        width: 100vw !important;
-        padding: 6.5rem 2rem 0 2rem !important;
-    }
-    
-    /* Header and navigation styles */
-    header[data-testid="stHeader"],
-    .stTabs [data-baseweb="tab-list"] {
+    /* Header styles */
+    header[data-testid="stHeader"] {
+        z-index: 1000;
         background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.3));
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
@@ -29,23 +22,24 @@ st.markdown(
     /* Navigation bar specific styles */
     .stTabs [data-baseweb="tab-list"] {
         position: fixed;
-        top: 3rem;
+        top: 1.4rem;
         left: 0;
-        right: 0;
         z-index: 1000;
-        padding: 0.5rem 2rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 0.5rem 2rem 1.3rem 2rem;
         height: 2.5rem;
-        display: flex;
         align-items: center;
     }
-    
+
     /* Tab styles */
     .stTabs [data-baseweb="tab"] {
         color: rgba(255, 255, 255, 0.9) !important;
         font-weight: 500;
     }
-    
+
+    .stTabs [data-baseweb="tab-highlight"] {
+        margin-bottom: 0.5rem;
+    }
+
     .stTabs [data-baseweb="tab"][aria-selected="true"] {
         color: #ff4b4b !important;
         font-weight: 600;
