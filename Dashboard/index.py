@@ -23,7 +23,6 @@ st.markdown(
     .stTabs [data-baseweb="tab-list"] {
         position: fixed;
         top: 1.4rem;
-        left: 0;
         z-index: 1000;
         padding: 0.5rem 2rem 1.3rem 2rem;
         height: 2.5rem;
