@@ -6,14 +6,7 @@ st.set_page_config(page_title="Apprenticeship Dropout Risk 2025", layout="wide")
 # Daten laden
 @st.cache_data
 def load_data():
-    import os
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    csv_path = os.path.join(base_dir, '..', 'data', 'dazubi_grouped_berufe.csv')
-    print("CWD:", os.getcwd())
-    print("CSV Path:", csv_path)
-
-    df = pd.read_csv(csv_path)
-    # df = pd.read_csv("../data/dazubi_grouped_berufe.csv")
+    df = pd.read_csv("../data/dazubi_grouped_berufe.csv")
     return df
 
 df = load_data()
