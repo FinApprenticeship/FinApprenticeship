@@ -3,19 +3,24 @@ import pandas as pd
 
 # Daten laden
 @st.cache_data
-def load_data():
+def load_dataframe():
     import os
     base_dir = os.path.dirname(os.path.abspath(__file__))
     csv_path = os.path.join(base_dir, '..', 'data', 'dazubi_grouped_berufe.csv')
-    print("CWD:", os.getcwd())
-    print("CSV Path:", csv_path)
 
-    df = pd.read_csv(csv_path)
-    # df = pd.read_csv("../data/dazubi_grouped_berufe.csv")
-    return df
+    return pd.read_csv(csv_path)
+
+@st.cache_data
+def load_data(df):
+    return {
+        'bundesland': df['Region'].unique(),
+        'beruf': df['Beruf_clean'].unique(),
+        'jahr': df['Jahr'].unique()
+    }
 
 def app():
-    df = load_data()
+    df = load_dataframe()
+    data = load_data(df)
 
     st.title("🚦 Apprenticeship Dropout Risk 2025")
     st.markdown("**See your personal risk of apprenticeship dropout by job, region, year, and school certificate – and how to improve your odds!**")
@@ -30,9 +35,9 @@ def app():
     }
 
     col1, col2, col3, col4 = st.columns(4)
-    bundesland = col1.selectbox("Federal State (Bundesland)", sorted(df['Region'].unique()))
-    beruf = col2.selectbox("Desired Apprenticeship (Beruf)", sorted(df['Beruf_clean'].unique()))
-    jahr = col3.selectbox("Year", sorted(df['Jahr'].unique()), index=len(df['Jahr'].unique())-1)  # default = neuestes Jahr
+    bundesland = col1.selectbox("Bundesland", sorted(data['bundesland']))
+    beruf = col2.selectbox("Desired Apprenticeship (Beruf)", sorted(data['beruf']))
+    jahr = col3.selectbox("Year", sorted(data['jahr']), index=len(data['jahr'])-1)  # default = neuestes Jahr
     abschluss = col4.selectbox("Your School Certificate", list(abschluss_map.keys()), index=2)  # default = Realschule
 
     abschluss_col = abschluss_map[abschluss]
