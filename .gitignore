@@ -137,3 +137,5 @@ models/*
 
 #config file has sensitive data
 .mlflow_uri
+Dashboard/synthetic_population_with_dropout_rate.csv
+Dashboard/synthetic_population_with_dropout_rate.csv
