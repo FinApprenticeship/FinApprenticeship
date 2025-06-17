@@ -136,6 +136,8 @@ def app():
                 geojson=germany_geojson,
                 featureidkey='properties.name',
                 color=selected_attributes[0],
+                # color_continuous_scale='blues'
+                color_continuous_scale='PuBu'
             )
             
             # Add custom hover text with full state names
