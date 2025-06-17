@@ -160,17 +160,23 @@ def app():
                     scope='europe',
                     center=dict(lat=51.1657, lon=10.4515),
                     projection_scale=6
+                ),
+                coloraxis=dict(
+                    colorbar=dict(
+                        tickformat=",.0f", # Update colorbar to use German number format
+                        len=1,  # Make the colorbar shorter
+                        y=0.5,  # Center the colorbar vertically
+                        yanchor='middle',  # Anchor the colorbar in the middle
+                    )
                 )
             )
             
-            # Update colorbar to use German number format
-            fig.update_coloraxes(
-                colorbar=dict(
-                    tickformat=",.0f",
-                )
-            )
-            
-            st.plotly_chart(fig, use_container_width=True)
-
+            col1, col2 = st.columns(2)
+            with col1:
+                event_map = st.plotly_chart(fig, use_container_width=True, on_select='rerun')
+            if len(event_map.get('selection', {}).get('points', [])) > 0:
+                with col2:
+                    state = event_map.get('selection', {}).get('points', [])[0]['location']
+                    st.write(state)
 
     st.caption("Made with ❤️ by your Data Science Team FinApprenticeship")
