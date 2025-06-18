@@ -126,6 +126,7 @@ def app():
                 st.plotly_chart(fig, use_container_width=True)
         elif type_analysis == 'Karte':
             selected_attribute = selected_attributes[0]
+            number_format = ",.0f"
             col1, col2 = st.columns(2)
             with col1:
                 # We have no selected years, so we show a map for the selected attributes
@@ -139,14 +140,13 @@ def app():
                     geojson=germany_geojson,
                     featureidkey='properties.name',
                     color=selected_attribute,
-                    # color_continuous_scale='blues'
                     color_continuous_scale='PuBu'
                 )
                 
                 # Add custom hover text with full state names
                 fig.update_traces(
                     hovertemplate="<b>%{customdata[0]}</b><br>" +
-                                f"{selected_attribute}: %{{z:,.0f}}",
+                                f"{selected_attribute}: %{{z:{number_format}}}",
                     customdata=df_map[['Region']].values
                 )
                 
@@ -166,7 +166,7 @@ def app():
                     ),
                     coloraxis=dict(
                         colorbar=dict(
-                            tickformat=",.0f", # Update colorbar to use German number format
+                            tickformat=number_format, # Update colorbar to use German number format
                             len=1,  # Make the colorbar shorter
                             y=0.5,  # Center the colorbar vertically
                             yanchor='middle',  # Anchor the colorbar in the middle
@@ -184,8 +184,15 @@ def app():
                         df_map_filtered = df_map_filtered[df_map_filtered['Region_key'] == state]
                 df_bar = df_map_filtered.groupby(['Beruf'])[selected_attribute].sum().sort_values(ascending=False).reset_index().head(15)
                 fig = px.bar(df_bar[::-1], x=selected_attribute, y='Beruf', orientation='h', height=len(df_bar) * 40)
+                fig.update_traces(
+                    hovertemplate="<b>%{customdata[0]}</b><br>" +
+                                f"{selected_attribute}: %{{x:{number_format}}}",
+                    customdata=df_bar[['Beruf']].values
+                )
                 fig.update_layout(
                     margin={"r":0,"t":0,"l":0,"b":0},
+                    separators=",.",
+                    xaxis=dict(tickformat=number_format)
                 )
                 st.plotly_chart(fig, use_container_width=True)
 
