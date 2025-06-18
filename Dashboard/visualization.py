@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import requests
 
 # Load German GeoJSON data
@@ -182,8 +183,20 @@ def app():
                     state = event_map.get('selection', {}).get('points', [])[0]['location']
                     if state is not None:
                         df_map_filtered = df_map_filtered[df_map_filtered['Region_key'] == state]
-                df_bar = df_map_filtered.groupby(['Beruf'])[selected_attribute].sum().sort_values(ascending=False).reset_index().head(15)
-                fig = px.bar(df_bar[::-1], x=selected_attribute, y='Beruf', orientation='h', height=len(df_bar) * 40)
+                df_bar = df_map_filtered.groupby(['Beruf'])[selected_attribute].sum().sort_values(ascending=False).reset_index()
+                # take the top 15 and reverse the order, so the bar chart shows the longest at the top
+                df_bar = df_bar.head(15)[::-1]
+                # fig = px.bar(df_bar, x=selected_attribute, y='Beruf', text_auto=True, orientation='h', height=len(df_bar) * 40)
+                # Use GraphObj instead of express, because we can set the position of the text inside the bar
+                fig = go.Figure(go.Bar(
+                    x=df_bar[selected_attribute],
+                    y=df_bar['Beruf'],
+                    text=df_bar[selected_attribute],
+                    orientation='h',
+                    textposition='inside',
+                    insidetextanchor='start',
+                    texttemplate=f'%{{text:{number_format}}}'
+                ))
                 fig.update_traces(
                     hovertemplate="<b>%{customdata[0]}</b><br>" +
                                 f"{selected_attribute}: %{{x:{number_format}}}",
@@ -191,6 +204,7 @@ def app():
                 )
                 fig.update_layout(
                     margin={"r":0,"t":0,"l":0,"b":0},
+                    height=len(df_bar) * 40,
                     separators=",.",
                     xaxis=dict(tickformat=number_format)
                 )
