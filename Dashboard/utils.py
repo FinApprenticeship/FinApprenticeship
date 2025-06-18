@@ -36,7 +36,14 @@ def apply_common_layout_settings(fig, number_format=None, number_format_x=None, 
             title=dict(font=dict(size=font_size_title)),
             tickfont=dict(size=font_size_base)
         ),
-        legend=dict(font=dict(size=font_size_base)),
+        legend=dict(
+            title=dict(
+                font=dict(size=font_size_base)
+            ),
+            font=dict(
+                size=font_size_base
+            ),
+        ),
         coloraxis=dict(
             colorbar=dict(
                 tickformat=number_format,
