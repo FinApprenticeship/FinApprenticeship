@@ -2,7 +2,9 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.io as pio
 import requests
+from utils import apply_common_layout_settings
 
 # Load German GeoJSON data
 @st.cache_data
@@ -91,6 +93,7 @@ def app():
     st.title("🚦 Visualisierung der bibb DAZUBI Daten")
 
     # We need at least one attribute to do anything
+    number_format = ",.0f"
     if len(selected_attributes) > 0:
         df_filtered = df.copy()
         # At first filter the dataframe based on the selected years, states, jobs, and attributes
@@ -109,7 +112,7 @@ def app():
                 for attribute in selected_attributes:
                     df_attr = df_time[attribute].sum().reset_index()
                     fig = px.line(df_attr, x='Jahr', y=attribute, color='Region', labels={'variable': 'Ausgewählte Bundesländer'})
-                    fig.update_layout(xaxis=dict(tickformat='d'))
+                    apply_common_layout_settings(fig, number_format_x='d', number_format_y=number_format)
                     st.plotly_chart(fig, use_container_width=True)
             elif len(selected_jobs) > 1:
                 # If we have more than one job, we show a line chart per job
@@ -117,17 +120,17 @@ def app():
                 for attribute in selected_attributes:
                     df_attr = df_time[attribute].sum().reset_index()
                     fig = px.line(df_attr, x='Jahr', y=attribute, color='Beruf', labels={'variable': 'Ausgewählte Berufe'})
-                    fig.update_layout(xaxis=dict(tickformat='d'))
+                    apply_common_layout_settings(fig, number_format_x='d', number_format_y=number_format)
                     st.plotly_chart(fig, use_container_width=True)
             else: 
                 # We have no selected states or jobs, so we show a line chart for the selected attributes
                 df_time = df_filtered.groupby(['Jahr'])[selected_attributes].sum().reset_index()
                 fig = px.line(df_time, x='Jahr', y=selected_attributes, labels={'variable': 'Ausgewählte Merkmale'})
-                fig.update_layout(xaxis=dict(tickformat='d'))
+                fig.update_layout(yaxis_title='')
+                apply_common_layout_settings(fig, number_format_x='d', number_format_y=number_format)
                 st.plotly_chart(fig, use_container_width=True)
         elif type_analysis == 'Karte':
             selected_attribute = selected_attributes[0]
-            number_format = ",.0f"
             col1, col2 = st.columns(2)
             with col1:
                 # We have no selected years, so we show a map for the selected attributes
@@ -156,23 +159,13 @@ def app():
                     fitbounds="locations",
                     visible=False
                 )
+                apply_common_layout_settings(fig, number_format)
                 fig.update_layout(
-                    margin={"r":0,"t":0,"l":0,"b":0},
-                    # plotly has troubles with localizations, but at the moment we only support German, so we set the separators by hand
-                    separators=",.",
                     geo=dict(
                         scope='europe',
                         center=dict(lat=51.1657, lon=10.4515),
                         projection_scale=6
                     ),
-                    coloraxis=dict(
-                        colorbar=dict(
-                            tickformat=number_format, # Update colorbar to use German number format
-                            len=1,  # Make the colorbar shorter
-                            y=0.5,  # Center the colorbar vertically
-                            yanchor='middle',  # Anchor the colorbar in the middle
-                        )
-                    )
                 )
                 event_map = st.plotly_chart(fig, use_container_width=True, on_select='rerun')
 
@@ -202,11 +195,16 @@ def app():
                                 f"{selected_attribute}: %{{x:{number_format}}}",
                     customdata=df_bar[['Beruf']].values
                 )
+                apply_common_layout_settings(fig, number_format)
                 fig.update_layout(
-                    margin={"r":0,"t":0,"l":0,"b":0},
                     height=len(df_bar) * 40,
-                    separators=",.",
-                    xaxis=dict(tickformat=number_format)
+                    xaxis=dict(
+                        title=selected_attribute,
+                        showgrid=True
+                    ),
+                    yaxis=dict(
+                        showgrid=False
+                    ),
                 )
                 st.plotly_chart(fig, use_container_width=True)
 
