@@ -24,6 +24,7 @@ def apply_common_layout_settings(fig, number_format=None, number_format_x=None, 
         number_format_y = number_format
     fig.update_layout(
         margin={"r":0,"t":0,"l":0,"b":0},
+        # plotly has troubles with localizations, but at the moment we only support German, so we set the separators by hand
         separators=",.",
         font=dict(size=font_size_base),
         xaxis=dict(
@@ -47,9 +48,9 @@ def apply_common_layout_settings(fig, number_format=None, number_format_x=None, 
         coloraxis=dict(
             colorbar=dict(
                 tickformat=number_format,
-                len=1,
-                y=0.5,
-                yanchor='middle',
+                len=1, # Make the colorbar's height 100% of the chart's height
+                y=0.5, # Center the colorbar vertically
+                yanchor='middle', # Anchor the colorbar in the middle
                 tickfont=dict(size=font_size_base)
             )
         ),
