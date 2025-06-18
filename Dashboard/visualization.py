@@ -4,7 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
 import requests
-from utils import apply_common_layout_settings
+from utils import apply_common_layout_settings, get_contrast_text_color
 
 # Load German GeoJSON data
 @st.cache_data
@@ -111,8 +111,36 @@ def app():
                 df_time = df_filtered.groupby(['Jahr', 'Region'])
                 for attribute in selected_attributes:
                     df_attr = df_time[attribute].sum().reset_index()
-                    fig = px.line(df_attr, x='Jahr', y=attribute, color='Region', labels={'variable': 'Ausgewählte Bundesländer'})
+                    # Define colors explicitly
+                    colors = px.colors.qualitative.Set1
+                    fig = px.line(df_attr, x='Jahr', y=attribute, color='Region', 
+                                labels={'variable': 'Ausgewählte Bundesländer'}, 
+                                hover_name=None, hover_data=None,
+                                color_discrete_sequence=colors)
                     apply_common_layout_settings(fig, number_format_x='d', number_format_y=number_format)
+                    # Set hover label background to match trace color and text color for contrast
+                    for i, trace in enumerate(fig.data):
+                        color = colors[i % len(colors)]
+                        trace.hoverlabel.bgcolor = color
+                        trace.hoverlabel.font.color = get_contrast_text_color(color)
+                    fig.update_traces(
+                        hovertemplate="<b>%{fullData.name}</b><br>" +
+                                    f"{attribute}: %{{y:{number_format}}}" +
+                                    '<extra></extra>'
+                    )
+                    fig.update_layout(
+                        xaxis=dict(
+                            tickmode='array',
+                            tickvals=data['years'],
+                            showspikes=True,
+                            spikemode='across',
+                            spikesnap='data',
+                            spikethickness=1,
+                            spikedash='solid',
+                            spikecolor='white',
+                        ),
+                        hovermode='x',
+                    )
                     st.plotly_chart(fig, use_container_width=True)
             elif len(selected_jobs) > 1:
                 # If we have more than one job, we show a line chart per job
