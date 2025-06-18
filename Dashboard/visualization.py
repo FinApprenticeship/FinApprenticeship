@@ -227,16 +227,14 @@ def app():
                 fig = go.Figure(go.Bar(
                     x=df_bar[selected_attribute],
                     y=df_bar['Beruf'],
-                    text=df_bar[selected_attribute],
+                    text=df_bar[selected_attribute].tolist(),
                     orientation='h',
                     textposition='inside',
                     insidetextanchor='start',
                     texttemplate=f'%{{text:{number_format}}}'
                 ))
                 fig.update_traces(
-                    hovertemplate="<b>%{customdata[0]}</b><br>" +
-                                f"{selected_attribute}: %{{x:{number_format}}}",
-                    customdata=df_bar[['Beruf']].values
+                    hoverinfo='none'
                 )
                 apply_common_layout_settings(fig, number_format)
                 fig.update_layout(
