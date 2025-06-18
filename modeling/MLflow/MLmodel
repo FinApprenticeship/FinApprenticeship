@@ -1,0 +1,80 @@
+artifact_path: best_model
+flavors:
+  python_function:
+    data: model.xgb
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.xgboost
+    python_version: 3.13.3
+  xgboost:
+    code: null
+    data: model.xgb
+    model_class: xgboost.sklearn.XGBClassifier
+    model_format: xgb
+    xgb_version: 3.0.2
+is_signature_from_type_hint: false
+mlflow_version: 2.22.0
+model_size_bytes: 447229
+model_uuid: 1a46a073d9a04634b97a161d9218cd6b
+prompts: null
+run_id: da46f2fc452b4efa979b5ca28e23f992
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "double", "name": "age", "required": true}, {"type": "double",
+    "name": "education", "required": true}, {"type": "double", "name": "year", "required":
+    true}, {"type": "double", "name": "state", "required": true}, {"type": "double",
+    "name": "gender", "required": true}, {"type": "double", "name": "sector", "required":
+    true}, {"type": "double", "name": "nationality", "required": true}, {"type": "double",
+    "name": "Emp_Age_25_34_Share", "required": true}, {"type": "double", "name": "Emp_Age_35_49_Share",
+    "required": true}, {"type": "double", "name": "Emp_Age_50_Plus_Share", "required":
+    true}, {"type": "double", "name": "Emp_Age_Under_25_Share", "required": true},
+    {"type": "double", "name": "Emp_Bachelor_Share", "required": true}, {"type": "double",
+    "name": "Emp_Diplom_Magister_StateExam_Share", "required": true}, {"type": "double",
+    "name": "Emp_Foreign_Share", "required": true}, {"type": "double", "name": "Emp_Index",
+    "required": true}, {"type": "double", "name": "Emp_Master_Tech_Share", "required":
+    true}, {"type": "double", "name": "Emp_No_Vocational_Edu_Share", "required": true},
+    {"type": "double", "name": "Emp_PartTime_Share", "required": true}, {"type": "double",
+    "name": "Emp_Promotion_Share", "required": true}, {"type": "double", "name": "Emp_Recognized_Vocational_Edu_Share",
+    "required": true}, {"type": "double", "name": "Emp_Sector_Agriculture_Share",
+    "required": true}, {"type": "double", "name": "Emp_Sector_Construction_Share",
+    "required": true}, {"type": "double", "name": "Emp_Sector_Manufacturing_Machinery_Share",
+    "required": true}, {"type": "double", "name": "Emp_Sector_Manufacturing_Other_Share",
+    "required": true}, {"type": "double", "name": "Emp_Sector_Manufacturing_Share",
+    "required": true}, {"type": "double", "name": "Emp_Sector_Services_Edu_Culture_Share",
+    "required": true}, {"type": "double", "name": "Emp_Sector_Services_Finance_Insurance_Share",
+    "required": true}, {"type": "double", "name": "Emp_Sector_Services_Health_Social_Share",
+    "required": true}, {"type": "double", "name": "Emp_Sector_Services_Other_Share",
+    "required": true}, {"type": "double", "name": "Emp_Sector_Services_Public_Admin_Share",
+    "required": true}, {"type": "double", "name": "Emp_Sector_Services_Share", "required":
+    true}, {"type": "double", "name": "Emp_Sector_Services_Trade_Share", "required":
+    true}, {"type": "double", "name": "Emp_Sector_Services_Transport_Com_Share", "required":
+    true}, {"type": "double", "name": "Emp_Total_Count", "required": true}, {"type":
+    "double", "name": "Emp_Vocational_Edu_Unknown_Share", "required": true}, {"type":
+    "double", "name": "Emp_Women_Share", "required": true}, {"type": "double", "name":
+    "Unemp_Age_25_34_Share", "required": true}, {"type": "double", "name": "Unemp_Age_35_49_Share",
+    "required": true}, {"type": "double", "name": "Unemp_Age_50_Plus_Share", "required":
+    true}, {"type": "double", "name": "Unemp_Age_Under_25_Share", "required": true},
+    {"type": "double", "name": "Unemp_Bachelor_Share", "required": true}, {"type":
+    "double", "name": "Unemp_Diplom_Magister_Master_StateExam_Share", "required":
+    true}, {"type": "double", "name": "Unemp_Edu_Unknown_Share", "required": true},
+    {"type": "double", "name": "Unemp_Foreign_Share", "required": true}, {"type":
+    "double", "name": "Unemp_Index_2013_100", "required": true}, {"type": "double",
+    "name": "Unemp_LongTerm_Share", "required": true}, {"type": "double", "name":
+    "Unemp_No_Vocational_Edu_Share", "required": true}, {"type": "double", "name":
+    "Unemp_Promotion_Share", "required": true}, {"type": "double", "name": "Unemp_Rate_Men",
+    "required": true}, {"type": "double", "name": "Unemp_Rate_Total", "required":
+    true}, {"type": "double", "name": "Unemp_Rate_Women", "required": true}, {"type":
+    "double", "name": "Unemp_Total_Count", "required": true}, {"type": "double", "name":
+    "Unemp_Vocational_Training_Share", "required": true}, {"type": "double", "name":
+    "Unemp_Women_Share", "required": true}, {"type": "double", "name": "nominal_wage_index",
+    "required": true}, {"type": "double", "name": "nominal_wage_growth_rate", "required":
+    true}]'
+  outputs: '[{"type": "long", "required": true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2025-06-09 19:13:12.389846'
