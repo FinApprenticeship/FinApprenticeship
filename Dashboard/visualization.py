@@ -40,6 +40,40 @@ def load_data(df):
         'attributes': attributes
     }
 
+colors_chart = px.colors.qualitative.Set1
+
+def add_spike(fig, number_format, tickvals, attribute=None):
+    if attribute is None:
+        fig.update_traces(
+            hovertemplate="<b>%{fullData.name}: </b>" +
+                        f"%{{y:{number_format}}}" +
+                        '<extra></extra>'
+        )
+    else:
+        fig.update_traces(
+            hovertemplate="<b>%{fullData.name}</b><br>" +
+                        f"{attribute}: %{{y:{number_format}}}" +
+                        '<extra></extra>'
+        )
+    fig.update_layout(
+        xaxis=dict(
+            tickmode='array',
+            tickvals=tickvals,
+            showspikes=True,
+            spikemode='across',
+            spikesnap='data',
+            spikethickness=1,
+            spikedash='solid',
+            spikecolor='white',
+        ),
+        hovermode='x',
+    )
+    for i, trace in enumerate(fig.data):
+        color = colors_chart[i % len(colors_chart)]
+        trace.hoverlabel.bgcolor = color
+        trace.hoverlabel.font.color = get_contrast_text_color(color)
+
+
 def app():
     df = load_dataframe()
     data = load_data(df)
@@ -112,50 +146,31 @@ def app():
                 for attribute in selected_attributes:
                     df_attr = df_time[attribute].sum().reset_index()
                     # Define colors explicitly
-                    colors = px.colors.qualitative.Set1
                     fig = px.line(df_attr, x='Jahr', y=attribute, color='Region', 
                                 labels={'variable': 'Ausgewählte Bundesländer'}, 
                                 hover_name=None, hover_data=None,
-                                color_discrete_sequence=colors)
+                                color_discrete_sequence=colors_chart
+                    )
                     apply_common_layout_settings(fig, number_format_x='d', number_format_y=number_format)
+                    add_spike(fig, number_format, data['years'], attribute)
                     # Set hover label background to match trace color and text color for contrast
-                    for i, trace in enumerate(fig.data):
-                        color = colors[i % len(colors)]
-                        trace.hoverlabel.bgcolor = color
-                        trace.hoverlabel.font.color = get_contrast_text_color(color)
-                    fig.update_traces(
-                        hovertemplate="<b>%{fullData.name}</b><br>" +
-                                    f"{attribute}: %{{y:{number_format}}}" +
-                                    '<extra></extra>'
-                    )
-                    fig.update_layout(
-                        xaxis=dict(
-                            tickmode='array',
-                            tickvals=data['years'],
-                            showspikes=True,
-                            spikemode='across',
-                            spikesnap='data',
-                            spikethickness=1,
-                            spikedash='solid',
-                            spikecolor='white',
-                        ),
-                        hovermode='x',
-                    )
                     st.plotly_chart(fig, use_container_width=True)
             elif len(selected_jobs) > 1:
                 # If we have more than one job, we show a line chart per job
                 df_time = df_filtered.groupby(['Jahr', 'Beruf'])
                 for attribute in selected_attributes:
                     df_attr = df_time[attribute].sum().reset_index()
-                    fig = px.line(df_attr, x='Jahr', y=attribute, color='Beruf', labels={'variable': 'Ausgewählte Berufe'})
+                    fig = px.line(df_attr, x='Jahr', y=attribute, color='Beruf', labels={'variable': 'Ausgewählte Berufe'}, color_discrete_sequence=colors_chart)
                     apply_common_layout_settings(fig, number_format_x='d', number_format_y=number_format)
+                    add_spike(fig, number_format, data['years'], attribute)
                     st.plotly_chart(fig, use_container_width=True)
             else: 
                 # We have no selected states or jobs, so we show a line chart for the selected attributes
                 df_time = df_filtered.groupby(['Jahr'])[selected_attributes].sum().reset_index()
-                fig = px.line(df_time, x='Jahr', y=selected_attributes, labels={'variable': 'Ausgewählte Merkmale'})
+                fig = px.line(df_time, x='Jahr', y=selected_attributes, labels={'variable': 'Ausgewählte Merkmale'}, color_discrete_sequence=colors_chart)
                 fig.update_layout(yaxis_title='')
                 apply_common_layout_settings(fig, number_format_x='d', number_format_y=number_format)
+                add_spike(fig, number_format, data['years'])
                 st.plotly_chart(fig, use_container_width=True)
         elif type_analysis == 'Karte':
             selected_attribute = selected_attributes[0]
