@@ -91,92 +91,102 @@ def app():
 
     # We need at least one attribute to do anything
     if len(selected_attributes) > 0:
-        df_grouped = df
+        df_filtered = df.copy()
         # At first filter the dataframe based on the selected years, states, jobs, and attributes
         if type_analysis == 'Bundesland' and len(selected_years) > 0:
-            df_grouped = df_grouped[df_grouped['Jahr'].isin(selected_years)]
+            df_filtered = df_filtered[df_filtered['Jahr'].isin(selected_years)]
         if type_analysis == 'Zeitreihe' and len(selected_states) > 0:
-            df_grouped = df_grouped[df_grouped['Region'].isin(selected_states)]
+            df_filtered = df_filtered[df_filtered['Region'].isin(selected_states)]
         if len(selected_jobs) > 0:
-            df_grouped = df_grouped[df_grouped['Beruf_clean'].isin(selected_jobs)] 
+            df_filtered = df_filtered[df_filtered['Beruf_clean'].isin(selected_jobs)] 
 
         if type_analysis == 'Zeitreihe':
             # What should happen, if we have more than one state and more than one job?
             if len(selected_states) > 1:
                 # If we have more than one state, we show a line chart per state
-                df_grouped = df_grouped.groupby(['Jahr', 'Region'])
+                df_time = df_filtered.groupby(['Jahr', 'Region'])
                 for attribute in selected_attributes:
-                    df_attr = df_grouped[attribute].sum().reset_index()
+                    df_attr = df_time[attribute].sum().reset_index()
                     fig = px.line(df_attr, x='Jahr', y=attribute, color='Region', labels={'variable': 'Ausgewählte Bundesländer'})
                     fig.update_layout(xaxis=dict(tickformat='d'))
                     st.plotly_chart(fig, use_container_width=True)
             elif len(selected_jobs) > 1:
                 # If we have more than one job, we show a line chart per job
-                df_grouped = df_grouped.groupby(['Jahr', 'Beruf_clean'])
+                df_time = df_filtered.groupby(['Jahr', 'Beruf_clean'])
                 for attribute in selected_attributes:
-                    df_attr = df_grouped[attribute].sum().reset_index()
+                    df_attr = df_time[attribute].sum().reset_index()
                     fig = px.line(df_attr, x='Jahr', y=attribute, color='Beruf_clean', labels={'variable': 'Ausgewählte Berufe'})
                     fig.update_layout(xaxis=dict(tickformat='d'))
                     st.plotly_chart(fig, use_container_width=True)
             else: 
                 # We have no selected states or jobs, so we show a line chart for the selected attributes
-                df_grouped = df_grouped.groupby(['Jahr'])[selected_attributes].sum().reset_index()
-                fig = px.line(df_grouped, x='Jahr', y=selected_attributes, labels={'variable': 'Ausgewählte Merkmale'})
+                df_time = df_filtered.groupby(['Jahr'])[selected_attributes].sum().reset_index()
+                fig = px.line(df_time, x='Jahr', y=selected_attributes, labels={'variable': 'Ausgewählte Merkmale'})
                 fig.update_layout(xaxis=dict(tickformat='d'))
                 st.plotly_chart(fig, use_container_width=True)
         elif type_analysis == 'Karte':
-            # We have no selected years, so we show a map for the selected attributes
-            # We group by Region and Region_key, so we can use Region_key as the key in the map and Region for the hover text
-            df_grouped = df_grouped.groupby(['Region', 'Region_key'])[selected_attributes].sum().reset_index()
-            
-            # Create the choropleth map for German states
-            fig = px.choropleth(
-                df_grouped,
-                locations='Region_key',
-                geojson=germany_geojson,
-                featureidkey='properties.name',
-                color=selected_attributes[0],
-                # color_continuous_scale='blues'
-                color_continuous_scale='PuBu'
-            )
-            
-            # Add custom hover text with full state names
-            fig.update_traces(
-                hovertemplate="<b>%{customdata[0]}</b><br>" +
-                            f"{selected_attributes[0]}: %{{z:,.0f}}",
-                customdata=df_grouped[['Region']].values
-            )
-            
-            # Update layout for better visualization
-            fig.update_geos(
-                fitbounds="locations",
-                visible=False
-            )
-            fig.update_layout(
-                margin={"r":0,"t":0,"l":0,"b":0},
-                # plotly has troubles with localizations, but at the moment we only support German, so we set the separators by hand
-                separators=",.",
-                geo=dict(
-                    scope='europe',
-                    center=dict(lat=51.1657, lon=10.4515),
-                    projection_scale=6
-                ),
-                coloraxis=dict(
-                    colorbar=dict(
-                        tickformat=",.0f", # Update colorbar to use German number format
-                        len=1,  # Make the colorbar shorter
-                        y=0.5,  # Center the colorbar vertically
-                        yanchor='middle',  # Anchor the colorbar in the middle
-                    )
-                )
-            )
-            
+            selected_attribute = selected_attributes[0]
             col1, col2 = st.columns(2)
             with col1:
+                # We have no selected years, so we show a map for the selected attributes
+                # We group by Region and Region_key, so we can use Region_key as the key in the map and Region for the hover text
+                df_map = df_filtered.groupby(['Region', 'Region_key'])[selected_attribute].sum().reset_index()
+                
+                # Create the choropleth map for German states
+                fig = px.choropleth(
+                    df_map,
+                    locations='Region_key',
+                    geojson=germany_geojson,
+                    featureidkey='properties.name',
+                    color=selected_attribute,
+                    # color_continuous_scale='blues'
+                    color_continuous_scale='PuBu'
+                )
+                
+                # Add custom hover text with full state names
+                fig.update_traces(
+                    hovertemplate="<b>%{customdata[0]}</b><br>" +
+                                f"{selected_attribute}: %{{z:,.0f}}",
+                    customdata=df_map[['Region']].values
+                )
+                
+                # Update layout for better visualization
+                fig.update_geos(
+                    fitbounds="locations",
+                    visible=False
+                )
+                fig.update_layout(
+                    margin={"r":0,"t":0,"l":0,"b":0},
+                    # plotly has troubles with localizations, but at the moment we only support German, so we set the separators by hand
+                    separators=",.",
+                    geo=dict(
+                        scope='europe',
+                        center=dict(lat=51.1657, lon=10.4515),
+                        projection_scale=6
+                    ),
+                    coloraxis=dict(
+                        colorbar=dict(
+                            tickformat=",.0f", # Update colorbar to use German number format
+                            len=1,  # Make the colorbar shorter
+                            y=0.5,  # Center the colorbar vertically
+                            yanchor='middle',  # Anchor the colorbar in the middle
+                        )
+                    )
+                )
                 event_map = st.plotly_chart(fig, use_container_width=True, on_select='rerun')
-            if len(event_map.get('selection', {}).get('points', [])) > 0:
-                with col2:
+
+            with col2:
+                state = None
+                df_map_filtered = df_filtered.copy()
+                if len(event_map.get('selection', {}).get('points', [])) > 0:
                     state = event_map.get('selection', {}).get('points', [])[0]['location']
-                    st.write(state)
+                    if state is not None:
+                        df_map_filtered = df_map_filtered[df_map_filtered['Region_key'] == state]
+                df_bar = df_map_filtered.groupby(['Beruf_clean'])[selected_attribute].sum().sort_values(ascending=False).reset_index().head(15)
+                fig = px.bar(df_bar[::-1], x=selected_attribute, y='Beruf_clean', orientation='h', height=len(df_bar) * 40)
+                fig.update_layout(
+                    margin={"r":0,"t":0,"l":0,"b":0},
+                )
+                st.plotly_chart(fig, use_container_width=True)
 
     st.caption("Made with ❤️ by your Data Science Team FinApprenticeship")
