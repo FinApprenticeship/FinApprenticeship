@@ -173,80 +173,81 @@ def app():
                 add_spike(fig, number_format, data['years'])
                 st.plotly_chart(fig, use_container_width=True)
         elif type_analysis == 'Karte':
-            selected_attribute = selected_attributes[0]
-            col1, col2 = st.columns(2)
-            with col1:
-                # We have no selected years, so we show a map for the selected attributes
-                # We group by Region and Region_key, so we can use Region_key as the key in the map and Region for the hover text
-                df_map = df_filtered.groupby(['Region', 'Region_key'])[selected_attribute].sum().reset_index()
-                
-                # Create the choropleth map for German states
-                fig = px.choropleth(
-                    df_map,
-                    locations='Region_key',
-                    geojson=germany_geojson,
-                    featureidkey='properties.name',
-                    color=selected_attribute,
-                    color_continuous_scale='PuBu'
-                )
-                
-                # Add custom hover text with full state names
-                fig.update_traces(
-                    hovertemplate="<b>%{customdata[0]}</b><br>" +
-                                f"{selected_attribute}: %{{z:{number_format}}}",
-                    customdata=df_map[['Region']].values
-                )
-                
-                # Update layout for better visualization
-                fig.update_geos(
-                    fitbounds="locations",
-                    visible=False
-                )
-                apply_common_layout_settings(fig, number_format)
-                fig.update_layout(
-                    geo=dict(
-                        scope='europe',
-                        center=dict(lat=51.1657, lon=10.4515),
-                        projection_scale=6
-                    ),
-                )
-                event_map = st.plotly_chart(fig, use_container_width=True, on_select='rerun')
+            for attribute in selected_attributes:
+                st.markdown(f'### {attribute}')
+                col1, col2 = st.columns(2)
+                with col1:
+                    # We have no selected years, so we show a map for the selected attributes
+                    # We group by Region and Region_key, so we can use Region_key as the key in the map and Region for the hover text
+                    df_map = df_filtered.groupby(['Region', 'Region_key'])[attribute].sum().reset_index()
+                    
+                    # Create the choropleth map for German states
+                    fig = px.choropleth(
+                        df_map,
+                        locations='Region_key',
+                        geojson=germany_geojson,
+                        featureidkey='properties.name',
+                        color=attribute,
+                        color_continuous_scale='PuBu'
+                    )
+                    
+                    # Add custom hover text with full state names
+                    fig.update_traces(
+                        hovertemplate="<b>%{customdata[0]}</b><br>" +
+                                    f"{attribute}: %{{z:{number_format}}}",
+                        customdata=df_map[['Region']].values
+                    )
+                    
+                    # Update layout for better visualization
+                    fig.update_geos(
+                        fitbounds="locations",
+                        visible=False
+                    )
+                    apply_common_layout_settings(fig, number_format)
+                    fig.update_layout(
+                        geo=dict(
+                            scope='europe',
+                            center=dict(lat=51.1657, lon=10.4515),
+                            projection_scale=6
+                        ),
+                    )
+                    event_map = st.plotly_chart(fig, use_container_width=True, on_select='rerun')
 
-            with col2:
-                state = None
-                df_map_filtered = df_filtered.copy()
-                if len(event_map.get('selection', {}).get('points', [])) > 0:
-                    state = event_map.get('selection', {}).get('points', [])[0]['location']
-                    if state is not None:
-                        df_map_filtered = df_map_filtered[df_map_filtered['Region_key'] == state]
-                df_bar = df_map_filtered.groupby(['Beruf'])[selected_attribute].sum().sort_values(ascending=False).reset_index()
-                # take the top 15 and reverse the order, so the bar chart shows the longest at the top
-                df_bar = df_bar.head(15)[::-1]
-                # fig = px.bar(df_bar, x=selected_attribute, y='Beruf', text_auto=True, orientation='h', height=len(df_bar) * 40)
-                # Use GraphObj instead of express, because we can set the position of the text inside the bar
-                fig = go.Figure(go.Bar(
-                    x=df_bar[selected_attribute],
-                    y=df_bar['Beruf'],
-                    text=df_bar[selected_attribute].tolist(),
-                    orientation='h',
-                    textposition='inside',
-                    insidetextanchor='start',
-                    texttemplate=f'%{{text:{number_format}}}'
-                ))
-                fig.update_traces(
-                    hoverinfo='none'
-                )
-                apply_common_layout_settings(fig, number_format)
-                fig.update_layout(
-                    height=len(df_bar) * 40,
-                    xaxis=dict(
-                        title=selected_attribute,
-                        showgrid=True
-                    ),
-                    yaxis=dict(
-                        showgrid=False
-                    ),
-                )
-                st.plotly_chart(fig, use_container_width=True)
+                with col2:
+                    state = None
+                    df_map_filtered = df_filtered.copy()
+                    if len(event_map.get('selection', {}).get('points', [])) > 0:
+                        state = event_map.get('selection', {}).get('points', [])[0]['location']
+                        if state is not None:
+                            df_map_filtered = df_map_filtered[df_map_filtered['Region_key'] == state]
+                    df_bar = df_map_filtered.groupby(['Beruf'])[attribute].sum().sort_values(ascending=False).reset_index()
+                    # take the top 15 and reverse the order, so the bar chart shows the longest at the top
+                    df_bar = df_bar.head(15)[::-1]
+                    # fig = px.bar(df_bar, x=attribute, y='Beruf', text_auto=True, orientation='h', height=len(df_bar) * 40)
+                    # Use GraphObj instead of express, because we can set the position of the text inside the bar
+                    fig = go.Figure(go.Bar(
+                        x=df_bar[attribute],
+                        y=df_bar['Beruf'],
+                        text=df_bar[attribute].tolist(),
+                        orientation='h',
+                        textposition='inside',
+                        insidetextanchor='start',
+                        texttemplate=f'%{{text:{number_format}}}'
+                    ))
+                    fig.update_traces(
+                        hoverinfo='none'
+                    )
+                    apply_common_layout_settings(fig, number_format)
+                    fig.update_layout(
+                        height=len(df_bar) * 40,
+                        xaxis=dict(
+                            title=attribute,
+                            showgrid=True
+                        ),
+                        yaxis=dict(
+                            showgrid=False
+                        ),
+                    )
+                    st.plotly_chart(fig, use_container_width=True)
 
     st.caption("Made with ❤️ by your Data Science Team FinApprenticeship")
