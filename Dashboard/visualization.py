@@ -18,7 +18,7 @@ def load_dataframe():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     csv_path = os.path.join(base_dir, '..', 'data', 'dazubi_grouped_berufe.csv')
     df = pd.read_csv(csv_path, index_col=0)
-
+    df.rename(columns={'Beruf_clean': 'Beruf'}, inplace=True)
     # We need the plain state names to use them as keys in the map
     # Berlin is our only special case
     STATE_NAME_MAPPING = {
@@ -29,10 +29,10 @@ def load_dataframe():
 
 @st.cache_data
 def load_data(df):
-    attributes = [x for x in df.columns if x not in ['Region', 'Region_key', 'Beruf_clean', 'Jahr']]
+    attributes = [x for x in df.columns if x not in ['Region', 'Region_key', 'Beruf', 'Jahr']]
     return {
         'states': df['Region'].unique(),
-        'jobs': df['Beruf_clean'].unique(),
+        'jobs': df['Beruf'].unique(),
         'years': df['Jahr'].unique(),
         'attributes': attributes
     }
@@ -98,7 +98,7 @@ def app():
         if type_analysis == 'Zeitreihe' and len(selected_states) > 0:
             df_filtered = df_filtered[df_filtered['Region'].isin(selected_states)]
         if len(selected_jobs) > 0:
-            df_filtered = df_filtered[df_filtered['Beruf_clean'].isin(selected_jobs)] 
+            df_filtered = df_filtered[df_filtered['Beruf'].isin(selected_jobs)] 
 
         if type_analysis == 'Zeitreihe':
             # What should happen, if we have more than one state and more than one job?
@@ -112,10 +112,10 @@ def app():
                     st.plotly_chart(fig, use_container_width=True)
             elif len(selected_jobs) > 1:
                 # If we have more than one job, we show a line chart per job
-                df_time = df_filtered.groupby(['Jahr', 'Beruf_clean'])
+                df_time = df_filtered.groupby(['Jahr', 'Beruf'])
                 for attribute in selected_attributes:
                     df_attr = df_time[attribute].sum().reset_index()
-                    fig = px.line(df_attr, x='Jahr', y=attribute, color='Beruf_clean', labels={'variable': 'Ausgewählte Berufe'})
+                    fig = px.line(df_attr, x='Jahr', y=attribute, color='Beruf', labels={'variable': 'Ausgewählte Berufe'})
                     fig.update_layout(xaxis=dict(tickformat='d'))
                     st.plotly_chart(fig, use_container_width=True)
             else: 
@@ -182,8 +182,8 @@ def app():
                     state = event_map.get('selection', {}).get('points', [])[0]['location']
                     if state is not None:
                         df_map_filtered = df_map_filtered[df_map_filtered['Region_key'] == state]
-                df_bar = df_map_filtered.groupby(['Beruf_clean'])[selected_attribute].sum().sort_values(ascending=False).reset_index().head(15)
-                fig = px.bar(df_bar[::-1], x=selected_attribute, y='Beruf_clean', orientation='h', height=len(df_bar) * 40)
+                df_bar = df_map_filtered.groupby(['Beruf'])[selected_attribute].sum().sort_values(ascending=False).reset_index().head(15)
+                fig = px.bar(df_bar[::-1], x=selected_attribute, y='Beruf', orientation='h', height=len(df_bar) * 40)
                 fig.update_layout(
                     margin={"r":0,"t":0,"l":0,"b":0},
                 )
