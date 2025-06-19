@@ -19,7 +19,7 @@ def load_german_states_geojson():
 def load_dataframe():
     import os
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    csv_path = os.path.join(base_dir, 'data', 'dazubi_grouped_berufe.csv')
+    csv_path = os.path.join(base_dir, 'data', 'dazubi_grouped_berufe.csv.bz2')
     df = pd.read_csv(csv_path, index_col=0)
     df.rename(columns={'Beruf_clean': 'Beruf'}, inplace=True)
     # We need the plain state names to use them as keys in the map

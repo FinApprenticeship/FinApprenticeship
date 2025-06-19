@@ -45,7 +45,7 @@ SCENARIO_DISPLAY_NAMES = {
 
 script_dir = os.path.dirname(__file__)
 
-csv_file_path = os.path.join(script_dir, 'data', 'scenario_analysis_results.csv')
+csv_file_path = os.path.join(script_dir, 'data', 'scenario_analysis_results.csv.bz2')
 
 
 # --- Data Loading and Preprocessing (cached for performance) ---
