@@ -5,6 +5,7 @@ import plotly.express as px
 import numpy as np
 import os
 import bz2
+from utils import apply_common_layout_settings
 
 script_dir = os.path.dirname(__file__)
 
@@ -124,7 +125,9 @@ def app():
         labels={"Jahr": "Jahr", "Prognose": "Vorhersage Vertragslösungsquote (%)"},
         title="📈 Prognose der Vertragslösungsquote"
     )
+    apply_common_layout_settings(fig)
     fig.update_layout(
+        margin_t=50,
         legend=dict(
             orientation="h",
             yanchor="bottom",

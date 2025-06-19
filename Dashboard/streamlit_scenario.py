@@ -3,8 +3,8 @@ import pandas as pd
 import plotly.express as px
 import re # For regular expression parsing of column names
 import os
+from utils import apply_common_layout_settings
 
-# st.set_page_config(layout="wide", page_title="Abbruchquote Szenario Analysen")
 
 st.title("Abbruchquote Szenario Analysen")
 st.markdown(
@@ -227,16 +227,16 @@ else:
             "Abbruchquote": ":.2%"
         }
     )
-
+    apply_common_layout_settings(fig, number_format_y=".0%")
     fig.update_layout(
         hovermode="x unified",
         legend_title_text="Szenario Details", # Reverted legend title
-        xaxis_title="Jahr",
-        yaxis_title="Abbruchquote (%)",
+        xaxis_title_text="Jahr",
+        yaxis_title_text="Abbruchquote (%)",
         # plot_bgcolor="black",
         # paper_bgcolor="black",
         # font=dict(family="Inter", size=12, color="white"),
-        font=dict(family="Inter", size=12),
+        # font=dict(family="Inter", size=12),
         margin=dict(l=0, r=0, t=50, b=0)
     )
     fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor="#FFFFFF", tickformat=".0%", range=[combined_df['Abbruchquote'].min()*0.9, combined_df['Abbruchquote'].max()*1.1])
