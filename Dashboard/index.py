@@ -19,6 +19,7 @@ PAGES = [
 ]
 
 def main():
+    st.logo(os.path.join(os.path.dirname(__file__), 'assets', "logo.png"), size='large')
     css_path = os.path.join(os.path.dirname(__file__), 'assets', "styles_v2.css")
     with open(css_path) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
