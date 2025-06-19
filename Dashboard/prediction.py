@@ -5,9 +5,10 @@ import plotly.express as px
 import numpy as np
 import os
 
+script_dir = os.path.dirname(__file__)
+
 @st.cache_data
 def load_data():
-    script_dir = os.path.dirname(__file__)
     csv_file_path = os.path.join(script_dir, '..', 'data', 'synthetic_population_with_features.csv')
     df = pd.read_csv(csv_file_path)
     if "Unnamed: 0" in df.columns:
@@ -17,7 +18,8 @@ def load_data():
 @st.cache_resource
 def load_xgb_model():
     model = xgb.Booster()
-    model.load_model("../models/MLflow/model.xgb")
+    model_file_path = os.path.join(script_dir, '..', 'models', 'MLflow', 'model.xgb')
+    model.load_model(model_file_path)
     return model
 
 def encode_input(row_df, df, cat_cols):
