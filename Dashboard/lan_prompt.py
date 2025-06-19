@@ -1,16 +1,15 @@
 # lan_prompt.py
-
 import streamlit as st
 
 def show():
-    st.header("❓ Ask your question about Apprenticeship")
-    st.write("We are here to help. Please describe your question in detail.")
+    st.header("❓ Stelle deine Frage zur Ausbildung")
+    st.write("Wir sind hier, um dir zu helfen. Bitte beschreibe deine Frage so genau wie möglich.")
 
-    question = st.text_area("📝 Type your question here:")
+    question = st.text_area("📝 Schreibe deine Frage hier:")
 
-    if st.button("Submit"):
+    if st.button("Absenden"):
         if question.strip():
-            st.success("🧠 Analyzing...")
-            # here will be implemented redirect to needed page based on result from LLM model
+            st.success("🧠 Wird analysiert...")
+            # Hier wird später die Weiterleitung zur passenden Seite basierend auf dem LLM-Ergebnis implementiert
         else:
-            st.error("⚠️ Please enter a question before submitting.")
+            st.error("⚠️ Bitte gib eine Frage ein, bevor du absendest.")

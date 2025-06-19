@@ -1,112 +1,32 @@
-# ds-modeling-pipeline
+# **FinApprenticeship: Strengthening Vocational Education Through Data-Driven Decisions**
 
-Here you find a Skeleton project for building a simple model in a python script or notebook and log the results on MLFlow.
+For decades, apprenticeship dropout rates have been steadily increasing in Germany. To better understand the factors driving this trend—and to provide actionable insights for students and policymakers—**FinApprenticeship** has compiled a comprehensive dataset from **DAZUBI** and **Gestatis**, covering the years **2013 to 2023**. This dataset includes information on apprenticeship contracts, labor market trends, and economic indicators at the federal state level.
 
-There are two ways to do it: 
-* In Jupyter Notebooks:
-    We train a simple model in the [jupyter notebook](notebooks/EDA-and-modeling.ipynb), where we select only some features and do minimal cleaning. The hyperparameters of feature engineering and modeling will be logged with MLflow
+## **Our Approach**
 
-* With Python scripts:
-    The [main script](modeling/train.py) will go through exactly the same process as the jupyter notebook and also log the hyperparameters with MLflow
+Due to the lack of individual-level data, we employed **iterative proportional fitting** to construct a **synthetic population** that mirrors the characteristics of real apprentices. This synthetic population served as the foundation for training a **machine learning (ML)** model.
 
-Data used is the [coffee quality dataset](https://github.com/jldbc/coffee-quality-database).
+The ML algorithm predicts the likelihood of an individual—based on their demographics and the job market and economic conditions of their federal state—**prematurely terminating** their apprenticeship.
 
-## Requirements:
+## **Scenario Analysis and Forecasting**
 
-- pyenv with Python: 3.11.3
+Building on the synthetic population, we projected the future development of key variables (e.g., education levels, demographic shifts). For a more nuanced **scenario analysis**, we altered these projections to simulate the potential effects of **policy interventions** on different indicators of apprenticeship success.
 
-### Setup
+We then used our trained ML model to analyze these simulated futures and estimate **dropout rates** under each scenario.
 
-Use the requirements file in this repo to create a new environment.
+![FinApprenticeship Workflow](images/workflow.png)
 
-```BASH
-make setup
+*Figure: Overview of the FinApprenticeship workflow. Aggregated data is de-aggregated via Iterative Proportional Fitting to create synthetic populations. These are used to train a machine learning model, generate projections, estimate personal dropout risks, and evaluate the impact of policy changes through scenario analysis.*
 
-#or
 
-pyenv local 3.11.3
-python -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements_dev.txt
-```
+## **Integrated Dashboard**
 
-The `requirements.txt` file contains the libraries needed for deployment.. of model or dashboard .. thus no jupyter or other libs used during development.
+We developed an **interactive dashboard** to make our insights accessible and actionable. The dashboard includes:
 
-The MLFLOW URI should **not be stored on git**, you have two options, to save it locally in the `.mlflow_uri` file:
+- **Historical data exploration**: Explore key trends and patterns across time and regions  
+- **Dropout risk assessment**: Estimate the dropout risk for prospective apprentices based on their background  
+- **Scenario simulation results**: Visualize the potential impact of different policies on dropout rates
 
-```BASH
-echo http://127.0.0.1:5000/ > .mlflow_uri
-```
+---
 
-This will create a local file where the uri is stored which will not be added on github (`.mlflow_uri` is in the `.gitignore` file). Alternatively you can export it as an environment variable with
-
-```bash
-export MLFLOW_URI=http://127.0.0.1:5000/
-```
-
-This links to your local mlflow, if you want to use a different one, then change the set uri.
-
-The code in the [config.py](modeling/config.py) will try to read it locally and if the file doesn't exist will look in the env var.. IF that is not set the URI will be empty in your code.
-
-## Usage
-
-### Creating an MLFlow experiment
-
-You can do it via the GUI or via [command line](https://www.mlflow.org/docs/latest/tracking.html#managing-experiments-and-runs-with-the-tracking-service-api) if you use the local mlflow:
-
-```bash
-mlflow experiments create --experiment-name 0-template-ds-modeling
-```
-
-Check your local mlflow
-
-```bash
-mlflow ui
-```
-
-and open the link [http://127.0.0.1:5000](http://127.0.0.1:5000)
-
-This will throw an error if the experiment already exists. **Save the experiment name in the [config file](modeling/config.py).**
-
-In order to train the model and store test data in the data folder and the model in models run:
-
-```bash
-#activate env
-source .venv/bin/activate
-
-python -m modeling.train
-```
-
-In order to test that predict works on a test set you created run:
-
-```bash
-python modeling/predict.py models/linear data/X_test.csv data/y_test.csv
-```
-
-## About MLFLOW -- delete this when using the template
-
-MLFlow is a tool for tracking ML experiments. You can run it locally or remotely. It stores all the information about experiments in a database.
-And you can see the overview via the GUI or access it via APIs. Sending data to mlflow is done via APIs. And with mlflow you can also store models on S3 where you version them and tag them as production for serving them in production.
-![mlflow workflow](images/0_general_tracking_mlflow.png)
-
-### MLFlow GUI
-
-You can group model trainings in experiments. The granularity of what an experiment is up to your usecase. Recommended is to have an experiment per data product, as for all the runs in an experiment you can compare the results.
-![gui](images/1_gui.png)
-
-### Code to send data to MLFlow
-
-In order to send data about your model you need to set the connection information, via the tracking uri and also the experiment name (otherwise the default one is used). One run represents a model, and all the rest is metadata. For example if you want to save train MSE, test MSE and validation MSE you need to name them as 3 different metrics.
-If you are doing CV you can set the tracking as nested.
-![mlflow code](images/2_code.png)
-
-### MLFlow metadata
-
-There is no constraint between runs to have the same metadata tracked. I.e. for one run you can track different tags, different metrics, and different parameters (in cv some parameters might not exist for some runs so this .. makes sense to be flexible).
-
-- tags can be anything you want.. like if you do CV you might want to tag the best model as "best"
-- params are perfect for hypermeters and also for information about the data pipeline you use, if you scaling vs normalization and so on
-- metrics.. should be numeric values as these can get plotted
-
-![mlflow metadata](images/3_metadata.png)
+**FinApprenticeship** empowers stakeholders with data-driven insights to **strengthen vocational education and reduce dropout rates** across Germany.
