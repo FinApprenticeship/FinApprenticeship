@@ -11,6 +11,15 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+with st.sidebar:
+    st.markdown("### ❓ Stelle deine Frage zur Ausbildung")
+    question = st.text_area("📝 Deine Frage:")
+    if st.button("Absenden"):
+        if question.strip():
+            st.success("🧠 Wird analysiert...")
+        else:
+            st.error("⚠️ Bitte gib eine Frage ein.")
+
 st.markdown(
     """
     <style>
