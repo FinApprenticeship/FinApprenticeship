@@ -26,20 +26,36 @@ def apply_common_layout_settings(fig, number_format=None, number_format_x=None, 
         margin={"r":0,"t":0,"l":0,"b":0},
         # plotly has troubles with localizations, but at the moment we only support German, so we set the separators by hand
         separators=",.",
-        font=dict(size=font_size_base),
+        font=dict(
+            size=font_size_base
+        ),
         xaxis=dict(
             tickformat=number_format,
-            title=dict(font=dict(size=font_size_title)),
-            tickfont=dict(size=font_size_base)
+            title=dict(
+                font=dict(
+                    size=font_size_title
+                )
+            ),
+            tickfont=dict(
+                size=font_size_base
+            )
         ),
         yaxis=dict(
             tickformat=number_format_y,
-            title=dict(font=dict(size=font_size_title)),
-            tickfont=dict(size=font_size_base)
+            title=dict(
+                font=dict(
+                    size=font_size_title
+                )
+            ),
+            tickfont=dict(
+                size=font_size_base
+            )
         ),
         legend=dict(
             title=dict(
-                font=dict(size=font_size_base)
+                font=dict(
+                    size=font_size_base
+                )
             ),
             font=dict(
                 size=font_size_base
