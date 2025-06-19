@@ -35,7 +35,7 @@ def main():
     pg = st.navigation(PAGES)
     pg.run()
 
-    st.caption("Made with ❤️ by your Data Science Team FinApprenticeship")
+    st.caption("Made in 2025 with ❤️ by your Data Science Team FinApprenticeship")
 
 if __name__ == "__main__":
     main()
