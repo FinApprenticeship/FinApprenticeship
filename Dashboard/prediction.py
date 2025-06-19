@@ -3,10 +3,13 @@ import pandas as pd
 import xgboost as xgb
 import plotly.express as px
 import numpy as np
+import os
 
 @st.cache_data
 def load_data():
-    df = pd.read_csv("../data/synthetic_population_with_features.csv")
+    script_dir = os.path.dirname(__file__)
+    csv_file_path = os.path.join(script_dir, '..', 'data', 'synthetic_population_with_features.csv')
+    df = pd.read_csv(csv_file_path)
     if "Unnamed: 0" in df.columns:
         df = df.drop(columns=["Unnamed: 0"])
     return df
