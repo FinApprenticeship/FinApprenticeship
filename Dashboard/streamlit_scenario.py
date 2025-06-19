@@ -233,9 +233,10 @@ else:
         legend_title_text="Szenario Details", # Reverted legend title
         xaxis_title="Jahr",
         yaxis_title="Abbruchquote (%)",
-        plot_bgcolor="black",
-        paper_bgcolor="black",
-        font=dict(family="Inter", size=12, color="white"),
+        # plot_bgcolor="black",
+        # paper_bgcolor="black",
+        # font=dict(family="Inter", size=12, color="white"),
+        font=dict(family="Inter", size=12),
         margin=dict(l=0, r=0, t=50, b=0)
     )
     fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor="#FFFFFF", tickformat=".0%", range=[combined_df['Abbruchquote'].min()*0.9, combined_df['Abbruchquote'].max()*1.1])
