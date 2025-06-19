@@ -21,15 +21,17 @@ def main():
     pg = st.navigation(PAGES)
     pg.run()
 
+    if st.button("👉 Stell deine Frage"):
+        st.session_state.page = "question"
+
+    import lan_prompt
+
+    if st.session_state.page == "dashboard":
+        pass
+    elif st.session_state.page == "question":
+        lan_prompt.show()
+
+    st.caption("Made with ❤️ by your Data Science Team FinApprenticeship")
+
 if __name__ == "__main__":
     main()
-
-if st.button("👉 Stell deine Frage"):
-    st.session_state.page = "question"
-
-import lan_prompt
-
-if st.session_state.page == "dashboard":
-    pass
-elif st.session_state.page == "question":
-    lan_prompt.show()
