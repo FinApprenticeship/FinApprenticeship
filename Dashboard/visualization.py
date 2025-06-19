@@ -250,6 +250,4 @@ def app():
                     )
                     st.plotly_chart(fig, use_container_width=True)
 
-    st.caption("Made with ❤️ by your Data Science Team FinApprenticeship")
-
 app()
