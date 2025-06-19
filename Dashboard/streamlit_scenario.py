@@ -284,6 +284,3 @@ else:
         st.dataframe(summary_stats, use_container_width=True)
     else:
         st.info("Keine Daten zum Anzeigen von Statistiken.")
-
-
-st.caption("Made with ❤️ by your Data Science Team FinApprenticeship")
