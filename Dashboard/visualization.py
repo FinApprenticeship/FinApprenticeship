@@ -128,7 +128,9 @@ def app():
 
     # We need at least one attribute to do anything
     number_format = ",.0f"
-    if len(selected_attributes) > 0:
+    if len(selected_attributes) == 0:
+        st.warning("Bitte wähle mindestens ein Merkmal aus.")
+    else:
         df_filtered = df.copy()
         # At first filter the dataframe based on the selected years, states, jobs, and attributes
         if type_analysis == 'Bundesland' and len(selected_years) > 0:
