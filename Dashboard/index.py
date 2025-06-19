@@ -19,12 +19,12 @@ PAGES = [
 ]
 
 def main():
-    css_path = os.path.join(os.path.dirname(__file__), "styles.css")
+    css_path = os.path.join(os.path.dirname(__file__), 'assets', "styles_v2.css")
     with open(css_path) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
     with st.sidebar:
-        st.markdown("### ❓ Stelle deine Frage zur Ausbildung")
+        st.markdown("### ❓ stelle deine frage zur ausbildung")
         question = st.text_area("📝 Deine Frage:")
         if st.button("Absenden"):
             if question.strip():

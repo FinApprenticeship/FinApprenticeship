@@ -1,0 +1,4 @@
+header[data-testid="stHeader"] {
+    background: linear-gradient(to right, #023535, #005f5f);
+    border-bottom: 3px solid #00ffd0;
+}
