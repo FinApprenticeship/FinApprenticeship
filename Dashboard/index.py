@@ -1,6 +1,9 @@
 import streamlit as st
 import importlib
 
+if "page" not in st.session_state:
+    st.session_state.page = "dashboard"
+
 # Set page config
 st.set_page_config(
     page_title="Dashboard FinAppretinceship",
@@ -21,3 +24,13 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+if st.button("👉 Stell deine Frage"):
+    st.session_state.page = "question"
+
+import lan_prompt
+
+if st.session_state.page == "dashboard":
+    pass
+elif st.session_state.page == "question":
+    lan_prompt.show()
