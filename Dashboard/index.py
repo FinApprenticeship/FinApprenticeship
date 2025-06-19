@@ -14,7 +14,7 @@ PAGES = [
     st.Page("home.py", title="Startseite"),
     st.Page("visualization.py", title="Visualisierung"),
     st.Page("prediction.py", title="Vorhersage"),
-    st.Page("simulation.py", title="Simulation"),
+    st.Page("streamlit_scenario.py", title="Simulation"),
 ]
 
 def main():
