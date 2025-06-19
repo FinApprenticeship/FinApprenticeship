@@ -4,7 +4,7 @@ import plotly.express as px
 import re # For regular expression parsing of column names
 import os
 
-st.set_page_config(layout="wide", page_title="Abbruchquote Szenario Analysen")
+# st.set_page_config(layout="wide", page_title="Abbruchquote Szenario Analysen")
 
 st.title("Abbruchquote Szenario Analysen")
 st.markdown(
