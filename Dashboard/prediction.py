@@ -1,12 +1,17 @@
 import streamlit as st
 import pandas as pd
-import xgboost as xgb
 import plotly.express as px
 import numpy as np
 import os
-import bz2
+from prophet import Prophet
 from utils import apply_common_layout_settings
 
+# === Parameter anpassen ===
+min_year = 2010  
+max_year = 2019  
+prediction_years = list(range(2025, 2031)) 
+
+# === Data Loading ===
 script_dir = os.path.dirname(__file__)
 
 @st.cache_data
@@ -17,40 +22,12 @@ def load_data():
         df = df.drop(columns=["Unnamed: 0"])
     return df
 
-@st.cache_resource
-def load_xgb_model():
-    model = xgb.Booster()
-    model_file_path = os.path.join(script_dir, 'data', 'model.xgb.bz2')
-    with bz2.open(model_file_path, 'rb') as f:
-        model.load_model(bytearray(f.read()))
-    return model
-
-def encode_input(row_df, df, cat_cols):
-    for col in cat_cols:
-        cats = list(df[col].dropna().unique())
-        row_df[col] = row_df[col].apply(lambda x: cats.index(x) if x in cats else -1)
-    return row_df
-
-def get_template_row(df, beruf, bundesland, alter, geschlecht, herkunft, abschluss):
-    match = df[
-        (df['sector'] == beruf) &
-        (df['state'] == bundesland) &
-        (df['age'] == alter) &
-        (df['gender'] == geschlecht) &
-        (df['nationality'] == herkunft) &
-        (df['education'] == abschluss)
-    ]
-    if not match.empty:
-        return match.sort_values("year").iloc[-1]
-    else:
-        return df.iloc[0]
-
 def app():
     st.title("📊 Prognose der Vertragslösungsquote")
 
     df = load_data()
-    model = load_xgb_model()
 
+    # --- Sidebar-Filter ---
     st.sidebar.markdown("### 🔍 Auswahlkriterien")
     berufe = sorted(df['sector'].dropna().unique())
     bundeslaender = sorted(df['state'].dropna().unique())
@@ -70,61 +47,78 @@ def app():
         st.warning("Bitte wähle mindestens eine Option in allen Feldern aus.")
         return
 
-    prediction_years = list(range(2025, 2031))
     selected_year = st.selectbox("🗓 Prognosewert für Jahr", prediction_years)
 
-    model_features = [
-        "age", "education", "year", "state", "gender", "sector", "nationality"
-    ]
-    numerics = [col for col in df.columns if col not in model_features + ['dropped_out']]
-    model_features += numerics
+    all_prophet = []
 
-    forecasts = []
     for beruf in selected_beruf:
         for bundesland in selected_bundesland:
             for alter in selected_alter:
                 for geschlecht in selected_geschlecht:
                     for herkunft in selected_herkunft:
                         for abschluss in selected_abschluss:
-                            template = get_template_row(df, beruf, bundesland, alter, geschlecht, herkunft, abschluss)
-                            rows = []
-                            for jahr in prediction_years:
-                                row = template.copy()
-                                row["year"] = jahr
-                                row_df = pd.DataFrame([row])[model_features]
-                                cat_cols = ["age", "education", "state", "gender", "sector", "nationality"]
-                                row_df = encode_input(row_df, df, cat_cols)
-                                for nc in numerics:
-                                    row_df[nc] = pd.to_numeric(row_df[nc], errors='coerce')
-                                dmatrix = xgb.DMatrix(row_df)
-                                pred = model.predict(dmatrix)[0]
-                                
-                                if pred < 1:  
-                                    pred = pred * 100
-                                pred = np.clip(pred, 0, 100)
+                            # Filter for this combination
+                            combo_mask = (
+                                (df['sector'] == beruf) &
+                                (df['state'] == bundesland) &
+                                (df['age'] == alter) &
+                                (df['gender'] == geschlecht) &
+                                (df['nationality'] == herkunft) &
+                                (df['education'] == abschluss)
+                            )
+                            df_combo = df[combo_mask]
 
-                                rows.append({
-                                    "Jahr": jahr,
-                                    "Prognose": pred,
-                                    "Kombination": f"{beruf} | {bundesland} | {geschlecht} | {herkunft} | {abschluss} | {alter}"
+                            # Dropout-Rate per year (min_year - max_year)
+                            dropout_per_year = (
+                                df_combo[df_combo["year"].between(min_year, max_year)]
+                                .groupby("year")["dropped_out"]
+                                .mean()
+                                .reset_index()
+                            )
+                            dropout_per_year["dropped_out"] = dropout_per_year["dropped_out"] * 100  # in %
+
+                            if len(dropout_per_year) >= 2:
+                                prophet_df = pd.DataFrame({
+                                    "ds": pd.to_datetime(dropout_per_year["year"], format='%Y'),
+                                    "y": dropout_per_year["dropped_out"]
                                 })
-                            forecasts.append(pd.DataFrame(rows))
+                                m = Prophet(
+                                    yearly_seasonality=True,  
+                                    weekly_seasonality=False,
+                                    daily_seasonality=False
+                                )
+                                m.fit(prophet_df)
+                                future = pd.DataFrame({"ds": pd.to_datetime(prediction_years, format='%Y')})
+                                forecast = m.predict(future)
+                                trend_pred = forecast["yhat"].values
+                                trend_pred = np.clip(trend_pred, 0, 100)  
+                            else:
+                                trend_pred = [np.nan] * len(prediction_years)
+                            
+                            prophet_df_out = pd.DataFrame({
+                                "Jahr": prediction_years,
+                                "Prognose": trend_pred,
+                                "Kombination": f"{beruf} | {bundesland} | {geschlecht} | {herkunft} | {abschluss} | {alter}"
+                            })
+                            all_prophet.append(prophet_df_out)
 
-    if not forecasts:
+    if not all_prophet:
         st.error("⚠️ Keine gültigen Vorhersagen gefunden.")
         return
 
-    result = pd.concat(forecasts)
+    result = pd.concat(all_prophet)
 
+    # Plot
     fig = px.line(
         result,
         x="Jahr",
         y="Prognose",
         color="Kombination",
         markers=True,
-        labels={"Jahr": "Jahr", "Prognose": "Vorhersage Vertragslösungsquote (%)"},
-        title="📈 Prognose der Vertragslösungsquote"
+        labels={"Jahr": "Jahr", "Prognose": "Prognose Vertragslösungsquote (%)"},
+        title="📈 MPrognose der Vertragslösungsquote"
     )
+    fig.update_yaxes(range=[0, 100])
     apply_common_layout_settings(fig)
     fig.update_layout(
         margin_t=50,
@@ -140,11 +134,15 @@ def app():
     )
     st.plotly_chart(fig, use_container_width=True)
 
-    st.markdown(f"## 🌱 Prognosewerte für {selected_year}")
-    year_values = result[result["Jahr"] == selected_year]
-    for label in year_values["Kombination"].unique():
-        value = year_values[year_values["Kombination"] == label]["Prognose"].values[0]
-        st.metric(label=label, value=f"{value:.2f} %")
+    # Anzeige für das gewählte Jahr
+    st.markdown(f"## 🌱 Prognose für {selected_year}")
+    for label in result["Kombination"].unique():
+        value = result[
+            (result["Kombination"] == label) &
+            (result["Jahr"] == selected_year)
+        ]["Prognose"].values
+        if value.size > 0:
+            st.metric(label=label, value=f"{value[0]:.2f} %")
 
 if __name__ == "__main__":
     app()
