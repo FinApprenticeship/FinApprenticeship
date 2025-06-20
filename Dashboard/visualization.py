@@ -111,15 +111,21 @@ def app():
             selected_jobs = sorted(data['jobs'])
 
         # Show the selected values, beause the multiselect cuts off the values, if they are too long
-        st.markdown('### Ausgewählte Bundesländer:\n'
-                    + '\n'.join([f'  * {state}' for state in selected_states])
-                    + '\n### Ausgewähltes Jahr:\n'
-                    + f'  * {selected_year}'
-                    + '\n### Ausgewählte Berufe:\n'
-                    + '\n'.join([f'  * {job}' for job in selected_jobs])
-                    + '\n### Ausgewählte Merkmale:\n'
-                    + '\n'.join([f'  * {attribute}' for attribute in selected_attributes])
-                    )
+        # We only show if there are actually selected items
+        text_selected_items = ''
+        if len(selected_attributes) > 0:
+            text_selected_items += '\n### Ausgewählte Merkmale:\n'
+            text_selected_items += '\n'.join([f'  * {attribute}' for attribute in selected_attributes])
+        if type_analysis == 'Karte':
+            text_selected_items += '\n### Ausgewähltes Jahr:\n'
+            text_selected_items += f'  * {selected_year}'
+        if type_analysis == 'Zeitreihe' and len(selected_states) > 0:
+            text_selected_items += '\n### Ausgewählte Bundesländer:\n'
+            text_selected_items += '\n'.join([f'  * {state}' for state in selected_states])
+        if len(selected_jobs) > 0:
+            text_selected_items += '\n### Ausgewählte Berufe:\n'
+            text_selected_items += '\n'.join([f'  * {job}' for job in selected_jobs])
+        st.markdown(text_selected_items)
 
     st.title("Visualisierung der bibb DAZUBI Daten")
 
