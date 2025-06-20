@@ -8,6 +8,9 @@ from prophet import Prophet
 import xgboost as xgb
 from utils import apply_common_layout_settings
 
+import logging
+logging.getLogger("prophet").setLevel(logging.WARNING)
+
 # === Parameters for historical and prediction years ===
 min_year = 2010  # Start year for historical data used in Prophet
 max_year = 2019  # End year for historical data because of the COVID year (adjust as needed)
@@ -147,7 +150,13 @@ def app():
                                 row_df = pd.DataFrame([row])[model_features]
                                 cat_cols = ["age", "education", "state", "gender", "sector", "nationality"]
                                 row_df = encode_input(row_df, df, cat_cols)
-                                frow_df = row_df.apply(pd.to_numeric, errors='ignore')
+                                # TODO: check if this is needed
+                                # this line gives a FutureWarning:
+                                #     errors='ignore' is deprecated and will raise in a future version.
+                                #     Use to_numeric without passing `errors` and catch exceptions
+                                #     explicitly instead
+                                # but the variable frow_df is not used anywhere
+                                # frow_df = row_df.apply(pd.to_numeric, errors='ignore')
                                 dmatrix = xgb.DMatrix(row_df)
                                 pred = model.predict(dmatrix)[0]
                                 if pred < 1:  
