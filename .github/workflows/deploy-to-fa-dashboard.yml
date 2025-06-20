@@ -1,0 +1,85 @@
+# .github/workflows/deploy-to-fa-dashboard.yml
+name: Deploy to FA Dashboard
+
+on:
+  push:
+    tags:
+      - '*'  # Triggers on any tag creation
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout FinApprenticeship
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for tag info
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'  # Adjust to your Python version
+      
+      - name: Install pipreqs
+        run: pip install pipreqs
+      
+      - name: Get tag name
+        id: tag
+        run: echo "tag_name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      
+      - name: Create production directory structure
+        run: |
+          mkdir -p production
+          # Copy your production directories here
+          # Example (adjust paths to your actual structure):
+          cp -r src/ production/
+          cp -r config/ production/
+          cp streamlit_app.py production/
+          cp README.md production/
+          # Add any other files/directories you need
+      
+      - name: Generate requirements.txt with pipreqs
+        run: |
+          # Generate requirements from your main source directory
+          # Adjust the path to point to your main code directory
+          pipreqs production/src --force --print > production/requirements.txt
+          
+          # Optional: Clean up the requirements file
+          # Remove local packages or add version constraints if needed
+          echo "Generated requirements.txt:"
+          cat production/requirements.txt
+      
+      - name: Checkout FA-Dashboard
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/FA-Dashboard
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: fa-dashboard
+      
+      - name: Copy files to FA-Dashboard
+        run: |
+          # Clear existing content (optional - remove if you want to preserve some files)
+          rm -rf fa-dashboard/*
+          
+          # Copy production files
+          cp -r production/* fa-dashboard/
+          
+          # Copy any additional files directly to FA-Dashboard if needed
+          # cp some-config-file fa-dashboard/
+      
+      - name: Commit and push to FA-Dashboard
+        run: |
+          cd fa-dashboard
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          
+          git add .
+          git commit -m "Deploy version ${{ steps.tag.outputs.tag_name }}" || exit 0
+          git push origin main
+      
+      - name: Create tag in FA-Dashboard
+        run: |
+          cd fa-dashboard
+          git tag ${{ steps.tag.outputs.tag_name }}
+          git push origin ${{ steps.tag.outputs.tag_name }}
