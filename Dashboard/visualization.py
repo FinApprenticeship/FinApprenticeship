@@ -79,7 +79,7 @@ def app():
     data = load_data(df)
     type_analysis = 'Zeitreihe'
     selected_states = []
-    selected_years = []
+    selected_year = data['years'][-1]
     selected_jobs = []
     selected_attributes = []
 
@@ -103,11 +103,8 @@ def app():
             if "Alle" in selected_states:
                 selected_states = sorted(data['states'])
         elif type_analysis == 'Karte':
-            all_years = ["Alle"] + sorted(data['years'])
-            selected_years = st.multiselect("Jahr", all_years, placeholder="Wähle Jahre aus")
-            if "Alle" in selected_years:
-                selected_years = sorted(data['years'])
-
+            # all_years = ["Alle"] + sorted(data['years'])
+            selected_year = st.selectbox("Jahr", sorted(data['years']), len(data['years']) - 1)
         all_jobs = ["Alle"] + sorted(data['jobs'])
         selected_jobs = st.multiselect("Beruf", all_jobs, placeholder="Wähle Berufe aus")
         if "Alle" in selected_jobs:
@@ -116,8 +113,8 @@ def app():
         # Show the selected values, beause the multiselect cuts off the values, if they are too long
         st.markdown('### Ausgewählte Bundesländer:\n'
                     + '\n'.join([f'  * {state}' for state in selected_states])
-                    + '\n### Ausgewählte Jahre:\n'
-                    + '\n'.join([f'  * {year}' for year in selected_years])
+                    + '\n### Ausgewähltes Jahr:\n'
+                    + f'  * {selected_year}'
                     + '\n### Ausgewählte Berufe:\n'
                     + '\n'.join([f'  * {job}' for job in selected_jobs])
                     + '\n### Ausgewählte Merkmale:\n'
@@ -133,8 +130,8 @@ def app():
     else:
         df_filtered = df.copy()
         # At first filter the dataframe based on the selected years, states, jobs, and attributes
-        if type_analysis == 'Karte' and len(selected_years) > 0:
-            df_filtered = df_filtered[df_filtered['Jahr'].isin(selected_years)]
+        if type_analysis == 'Karte':
+            df_filtered = df_filtered[df_filtered['Jahr'] == selected_year]
         if type_analysis == 'Zeitreihe' and len(selected_states) > 0:
             df_filtered = df_filtered[df_filtered['Region'].isin(selected_states)]
         if len(selected_jobs) > 0:
