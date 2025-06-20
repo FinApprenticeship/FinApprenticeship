@@ -178,6 +178,10 @@ def app():
 
     result = pd.concat(all_hybrid)
 
+    # ==== Dynamischen y-Achsenbereich bestimmen ====
+    y_min = max(0, result["Prognose"].min() - 2)
+    y_max = min(100, result["Prognose"].max() + 2)
+
     # Plot
     fig = px.line(
         result,
@@ -188,7 +192,7 @@ def app():
         labels={"Jahr": "Jahr", "Prognose": "Prognose Vertragslösungsquote (%)"},
         title="Prognose (Prophet + Modell) der Vertragslösungsquote (2025–2030)"
     )
-    fig.update_yaxes(range=[0, 100])
+    fig.update_yaxes(range=[y_min, y_max])
     apply_common_layout_settings(fig)
     fig.update_layout(
         margin_t=50,
