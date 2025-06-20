@@ -133,7 +133,7 @@ def app():
     else:
         df_filtered = df.copy()
         # At first filter the dataframe based on the selected years, states, jobs, and attributes
-        if type_analysis == 'Bundesland' and len(selected_years) > 0:
+        if type_analysis == 'Karte' and len(selected_years) > 0:
             df_filtered = df_filtered[df_filtered['Jahr'].isin(selected_years)]
         if type_analysis == 'Zeitreihe' and len(selected_states) > 0:
             df_filtered = df_filtered[df_filtered['Region'].isin(selected_states)]
