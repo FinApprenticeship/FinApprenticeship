@@ -146,7 +146,7 @@ with st.sidebar:
     selected_scenarios = st.multiselect(
         "Auswahl Szenario(s):",
         options=all_scenarios_options,
-        default=["Alle"] if "Alle" in all_scenarios_options else []
+        default=["Bildung"]
     )
     if "Alle" in selected_scenarios:
         selected_scenarios_filtered = all_scenarios
@@ -158,7 +158,7 @@ with st.sidebar:
     selected_effect_sizes = st.multiselect(
         "Auswahl Effektgröße(n):",
         options=all_effect_sizes_options,
-        default=["Alle"] if "Alle" in all_effect_sizes_options else []
+        default=["1%"]
     )
     if "Alle" in selected_effect_sizes:
         selected_effect_sizes_filtered = all_effect_sizes
@@ -170,7 +170,7 @@ with st.sidebar:
     selected_regions = st.multiselect(
         "Auswahl Region(en):",
         options=all_regions_options,
-        default=["Alle"] if "Alle" in all_regions_options else []
+        default=["Bund"]
     )
     if "Alle" in selected_regions:
         selected_regions_filtered = all_regions
