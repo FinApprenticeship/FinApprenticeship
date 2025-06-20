@@ -179,10 +179,9 @@ def app():
                 st.plotly_chart(fig, use_container_width=True)
         elif type_analysis == 'Karte':
             for attribute in selected_attributes:
-                st.markdown(f'### {attribute}')
+                st.markdown(f'<h3 style="text-align: center;">Merkmal: {attribute}</h3>', unsafe_allow_html=True)
                 col1, col2 = st.columns(2)
                 with col1:
-                    # We have no selected years, so we show a map for the selected attributes
                     # We group by Region and Region_key, so we can use Region_key as the key in the map and Region for the hover text
                     df_map = df_filtered.groupby(['Region', 'Region_key'])[attribute].sum().reset_index()
                     
@@ -193,7 +192,7 @@ def app():
                         geojson=germany_geojson,
                         featureidkey='properties.name',
                         color=attribute,
-                        color_continuous_scale='PuBu'
+                        color_continuous_scale='PuBu',
                     )
                     
                     # Add custom hover text with full state names
@@ -215,6 +214,7 @@ def app():
                             center=dict(lat=51.1657, lon=10.4515),
                             projection_scale=6
                         ),
+                        coloraxis_colorbar_title_text=None,
                     )
                     event_map = st.plotly_chart(fig, use_container_width=True, on_select='rerun')
 
@@ -246,7 +246,9 @@ def app():
                     fig.update_layout(
                         height=len(df_bar) * 40,
                         xaxis=dict(
-                            title=attribute,
+                            title=dict(
+                                text=None,
+                            ),
                             showgrid=True
                         ),
                         yaxis=dict(
@@ -254,5 +256,8 @@ def app():
                         ),
                     )
                     st.plotly_chart(fig, use_container_width=True)
+                
+                st.markdown('---')
+
 
 app()
