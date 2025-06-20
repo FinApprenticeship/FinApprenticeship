@@ -23,7 +23,7 @@ def load_data():
     return df
 
 def app():
-    st.title("📊 Prognose der Vertragslösungsquote")
+    st.title("Prognose der Vertragslösungsquote")
 
     df = load_data()
 

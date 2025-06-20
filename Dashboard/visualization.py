@@ -121,7 +121,7 @@ def app():
                     + '\n'.join([f'  * {attribute}' for attribute in selected_attributes])
                     )
 
-    st.title("🚦 Visualisierung der bibb DAZUBI Daten")
+    st.title("Visualisierung der bibb DAZUBI Daten")
 
     # We need at least one attribute to do anything
     number_format = ",.0f"

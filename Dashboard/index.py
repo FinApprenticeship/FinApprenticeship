@@ -25,7 +25,7 @@ def main():
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
     with st.sidebar:
-        st.markdown("### ❓ stelle deine frage zur ausbildung")
+        st.markdown("### Stelle deine Frage zur Ausbildung")
         question = st.text_area("📝 Deine Frage:")
         if st.button("Absenden"):
             if question.strip():
