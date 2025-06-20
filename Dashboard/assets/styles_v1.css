@@ -1,0 +1,118 @@
+:root {
+    --highlight-color: #00ffd0;
+}
+/*
+.block-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+*/
+/*
+.start-button {
+    margin-top: 2rem;
+    padding: 0.8rem 2rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: linear-gradient(90deg, #00ffd0, #00c3ff, #00ff88);
+    color: black;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 0 15px #00ffd0;
+}
+.start-button:hover {
+    background: linear-gradient(90deg, #00ff88, #00c3ff, #00ffd0);
+    color: white;
+}
+
+*/
+html, body, .stApp {
+    background-color: #022e2e !important;
+    color: #e0fff9;
+}
+
+header[data-testid="stHeader"] {
+    background: linear-gradient(to right, #023535, #005f5f);
+    border-bottom: 3px solid var(--highlight-color);
+}
+
+section[data-testid="stSidebar"] {
+    background: rgba(0, 80, 80, 0.85);
+}
+/*
+.stTabs [data-baseweb="tab"] {
+    color: #cafffb !important;
+    font-weight: 600;
+}
+
+.stTabs [data-baseweb="tab"][aria-selected="true"] {
+    background: linear-gradient(to right, #00ffd0, #00c3ff);
+    color: black !important;
+    border-radius: 12px;
+    box-shadow: 0 0 12px #00ffd0;
+}
+*/
+
+.stButton > button {
+    background: linear-gradient(90deg, #00ffd0, #00c3ff);
+    color: black;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+}
+.stButton > button:hover {
+    background: linear-gradient(90deg, #00c3ff, #00ffd0);
+    color: white;
+}
+
+/* Radiobutton-MARKER (nur Punkt) in Blau */
+input[type="radio"]:checked + div > div {
+    background-color: #00c3ff !important;
+    border-color: #00c3ff !important;
+}
+
+/* Chips (MultiSelect-Tags): NICHT überschreiben → Rot bleibt */
+
+/* Dropdown-Felder (Select) Türkis gerahmt */
+div[data-baseweb="select"] {
+    /* border-color: var(--highlight-color) !important; */
+    /* box-shadow: 0 0 0 2px #00c3ff !important; */
+    border-radius: 8px !important;
+}
+
+div[data-baseweb="select"]:hover {
+    /* border-color: var(--highlight-color) !important; */
+    /* box-shadow: 0 0 0 2px #00e0ff !important; */
+}
+
+div[data-baseweb="select"] > div:focus-within {
+    border-color: var(--highlight-color) !important;
+    /* box-shadow: 0 0 0 2px #00ffd0 !important; */
+}
+
+textarea:focus {
+    border-color: var(--highlight-color) !important;
+    /* box-shadow: 0 0 0 2px #00ffd0 !important; */
+}
+
+/* Hauptbereich */
+/*
+.stMainBlockContainer {
+    padding: 3rem 2rem;
+    background-color: #022e2e;
+    border-radius: 1rem;
+    box-shadow: 0 0 30px rgba(0, 255, 208, 0.15);
+}
+*/
+
+/* Logo oben rechts */
+/*
+.custom-logo {
+    position: fixed;
+    top: 0.5rem;
+    right: 1rem;
+    z-index: 9999;
+} */

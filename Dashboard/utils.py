@@ -26,20 +26,36 @@ def apply_common_layout_settings(fig, number_format=None, number_format_x=None, 
         margin={"r":0,"t":0,"l":0,"b":0},
         # plotly has troubles with localizations, but at the moment we only support German, so we set the separators by hand
         separators=",.",
-        font=dict(size=font_size_base),
+        font=dict(
+            size=font_size_base
+        ),
         xaxis=dict(
             tickformat=number_format,
-            title=dict(font=dict(size=font_size_title)),
-            tickfont=dict(size=font_size_base)
+            title=dict(
+                font=dict(
+                    size=font_size_title
+                )
+            ),
+            tickfont=dict(
+                size=font_size_base
+            )
         ),
         yaxis=dict(
             tickformat=number_format_y,
-            title=dict(font=dict(size=font_size_title)),
-            tickfont=dict(size=font_size_base)
+            title=dict(
+                font=dict(
+                    size=font_size_title
+                )
+            ),
+            tickfont=dict(
+                size=font_size_base
+            )
         ),
         legend=dict(
             title=dict(
-                font=dict(size=font_size_base)
+                font=dict(
+                    size=font_size_base
+                )
             ),
             font=dict(
                 size=font_size_base
@@ -55,3 +71,26 @@ def apply_common_layout_settings(fig, number_format=None, number_format_x=None, 
             )
         ),
     ) 
+
+def get_contrast_text_color(color):
+    """Return 'black' or 'white' for optimal contrast with the given hex or rgb color string."""
+    # Handle RGB format
+    if color.startswith('rgb'):
+        # Extract RGB values from string like 'rgb(141,211,199)'
+        rgb_values = color.strip('rgb()').split(',')
+        r = int(rgb_values[0])
+        g = int(rgb_values[1])
+        b = int(rgb_values[2])
+    else:
+        # Handle hex format
+        # Remove the # if present
+        hex_color = color.lstrip('#')
+        # Convert hex to RGB
+        r = int(hex_color[0:2], 16)
+        g = int(hex_color[2:4], 16)
+        b = int(hex_color[4:6], 16)
+    
+    # Calculate relative luminance
+    luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+    # Return black for light colors, white for dark colors
+    return 'black' if luminance > 0.5 else 'white' 

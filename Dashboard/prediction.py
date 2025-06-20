@@ -3,10 +3,16 @@ import pandas as pd
 import xgboost as xgb
 import plotly.express as px
 import numpy as np
+import os
+import bz2
+from utils import apply_common_layout_settings
+
+script_dir = os.path.dirname(__file__)
 
 @st.cache_data
 def load_data():
-    df = pd.read_csv("../data/synthetic_population_with_features.csv")
+    csv_file_path = os.path.join(script_dir, 'data', 'synthetic_population_with_features.csv.bz2')
+    df = pd.read_csv(csv_file_path)
     if "Unnamed: 0" in df.columns:
         df = df.drop(columns=["Unnamed: 0"])
     return df
@@ -14,7 +20,9 @@ def load_data():
 @st.cache_resource
 def load_xgb_model():
     model = xgb.Booster()
-    model.load_model("../models/MLflow/model.xgb")
+    model_file_path = os.path.join(script_dir, 'data', 'model.xgb.bz2')
+    with bz2.open(model_file_path, 'rb') as f:
+        model.load_model(bytearray(f.read()))
     return model
 
 def encode_input(row_df, df, cat_cols):
@@ -117,7 +125,9 @@ def app():
         labels={"Jahr": "Jahr", "Prognose": "Vorhersage Vertragslösungsquote (%)"},
         title="📈 Prognose der Vertragslösungsquote"
     )
+    apply_common_layout_settings(fig)
     fig.update_layout(
+        margin_t=50,
         legend=dict(
             orientation="h",
             yanchor="bottom",
