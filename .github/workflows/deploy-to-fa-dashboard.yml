@@ -33,17 +33,15 @@ jobs:
           mkdir -p production
           # Copy your production directories here
           # Example (adjust paths to your actual structure):
-          cp -r src/ production/
-          cp -r config/ production/
-          cp streamlit_app.py production/
-          cp README.md production/
+          cp -r Dashboard production/
+          cp -r .streamlit production/
           # Add any other files/directories you need
       
       - name: Generate requirements.txt with pipreqs
         run: |
           # Generate requirements from your main source directory
           # Adjust the path to point to your main code directory
-          pipreqs production/src --force --print > production/requirements.txt
+          pipreqs production/Dashboard --force --print > production/requirements.txt
           
           # Optional: Clean up the requirements file
           # Remove local packages or add version constraints if needed
