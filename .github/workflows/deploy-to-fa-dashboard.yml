@@ -50,7 +50,7 @@ jobs:
           # Example (adjust paths to your actual structure):
           cp -r Dashboard production/
           cp -r .streamlit production/
-          ll production/
+          ls -la production/
           # Add any other files/directories you need
       
       - name: Generate requirements.txt with pipreqs
@@ -90,7 +90,7 @@ jobs:
           
           # Copy production files
           cp -r production/* fa-dashboard/
-          ll fa-dashboard/
+          ls -la fa-dashboard/
           
           # Copy any additional files directly to FA-Dashboard if needed
           # cp some-config-file fa-dashboard/
