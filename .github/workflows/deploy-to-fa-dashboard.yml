@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Generate GitHub App Token
         id: app_token_debug
-        uses: tibdex/github-app-token@v2  # Try v2 instead of v1
+        uses: tibdex/github-app-token@v1  # Try v2 instead of v1
         with:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
