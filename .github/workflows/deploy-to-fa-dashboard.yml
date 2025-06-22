@@ -80,7 +80,7 @@ jobs:
           rm -rf fa-dashboard/*
           
           # Copy production files
-          cp -r production/* fa-dashboard/
+          cp -r production/. fa-dashboard/
           ls -la fa-dashboard/
           
           # Copy any additional files directly to FA-Dashboard if needed
