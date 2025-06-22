@@ -50,6 +50,7 @@ jobs:
           # Example (adjust paths to your actual structure):
           cp -r Dashboard production/
           cp -r .streamlit production/
+          ll production/
           # Add any other files/directories you need
       
       - name: Generate requirements.txt with pipreqs
@@ -89,9 +90,23 @@ jobs:
           
           # Copy production files
           cp -r production/* fa-dashboard/
+          ll fa-dashboard/
           
           # Copy any additional files directly to FA-Dashboard if needed
           # cp some-config-file fa-dashboard/
+
+      - name: Debug - Show environment
+        run: |
+          echo "=== System Info ==="
+          uname -a
+          cat /etc/os-release
+          echo "=== Directory Structure ==="
+          ls -la
+          echo "=== Environment Variables ==="
+          env | sort
+          echo "=== Python Info ==="
+          python --version
+          pip list
       
       - name: Commit and push to FA-Dashboard
         run: |
