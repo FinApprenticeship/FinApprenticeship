@@ -11,14 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Generate GitHub App Token
-        id: app_token_debug
-        uses: tibdex/github-app-token@v1  # Try v2 instead of v1
-        with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
-          repository: ${{ github.repository_owner }}/FA-Dashboard
-    
       - name: Checkout FinApprenticeship
         uses: actions/checkout@v4
         with:
@@ -38,7 +30,7 @@ jobs:
 
       - name: Generate GitHub App Token
         id: app_token
-        uses: tibdex/github-app-token@v1
+        uses: tibdex/github-app-token@v2
         with:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
@@ -48,8 +40,7 @@ jobs:
           mkdir -p production
           # Copy your production directories here
           # Example (adjust paths to your actual structure):
-          cp -r Dashboard production/
-          cp -r .streamlit production/
+          cp -r Dashboard .streamlit production/
           ls -la production/
           # Add any other files/directories you need
       
