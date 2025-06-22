@@ -54,7 +54,18 @@ jobs:
           repository: ${{ github.repository_owner }}/FA-Dashboard
           token: ${{ secrets.GITHUB_TOKEN }}
           path: fa-dashboard
-      
+
+      - name: Check if tag already exists in FA-Dashboard
+        run: |
+          cd fa-dashboard
+          if git tag -l | grep -q "^${{ steps.tag.outputs.tag_name }}$"; then
+            echo "❌ Tag ${{ steps.tag.outputs.tag_name }} already exists in FA-Dashboard!"
+            echo "Please use a different tag name or remove the existing tag first."
+            exit 1
+          else
+            echo "✅ Tag ${{ steps.tag.outputs.tag_name }} is available"
+          fi
+            
       - name: Copy files to FA-Dashboard
         run: |
           # Clear existing content (optional - remove if you want to preserve some files)
