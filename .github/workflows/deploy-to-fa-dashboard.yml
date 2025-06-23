@@ -1,4 +1,8 @@
 # .github/workflows/deploy-to-fa-dashboard.yml
+
+# install the extension YAML Embedded Languages to make this work
+# if a run's first line is a comment, add an empty before it, so the syntax highlighter works
+# yaml-embedded-languages: shell
 name: Deploy to FA Dashboard
 
 on:
@@ -37,6 +41,7 @@ jobs:
           
       - name: Create production directory structure
         run: |
+
           # Copy everything we need for the Dashbaord to production
           mkdir -p production
           cp -r Dashboard .streamlit production/
@@ -44,6 +49,7 @@ jobs:
       
       - name: Generate requirements.txt with pipreqs
         run: |
+    
           # Generate requirements from your main source directory
           # Adjust the path to point to your main code directory
           pipreqs production/Dashboard --force --print > production/requirements.txt
@@ -74,6 +80,7 @@ jobs:
             
       - name: Copy files to FA-Dashboard
         run: |
+
           # Clear existing content (optional - remove if you want to preserve some files)
           rm -rf fa-dashboard/*
           # Copy production files
