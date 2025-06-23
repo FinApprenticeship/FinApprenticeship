@@ -40,6 +40,7 @@ jobs:
           # Copy everything we need for the Dashbaord to production
           mkdir -p production
           cp -r Dashboard .streamlit production/
+          cp dashboard.md production/README.md
       
       - name: Generate requirements.txt with pipreqs
         run: |
