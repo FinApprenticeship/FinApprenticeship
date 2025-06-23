@@ -128,14 +128,17 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-
-data/*.csv
-data/*.parquet
+# data files
+data/**/*.csv
+data/**/*.pickle
+data/**/*.parquet
 models/*.sav
 mlruns
 models/*
 
 #config file has sensitive data
 .mlflow_uri
-Dashboard/synthetic_population_with_dropout_rate.csv
-Dashboard/synthetic_population_with_dropout_rate.csv
+
+# VScode configuration
+.vscode/
+.nbdime
