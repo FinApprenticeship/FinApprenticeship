@@ -1,0 +1,3 @@
+#!/bin/sh
+pytest
+[ $? -eq 0 ] || exit 1
